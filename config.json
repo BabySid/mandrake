@@ -1,0 +1,51 @@
+{
+  "server": {
+    "listen": ":8080",
+    "read_timeout": "3600s",
+    "write_timeout": "3600s"
+  },
+  "routes": [
+    {
+      "path": "/",
+      "upstream": "https://openproxy.zuoyebang.cc",
+      "flush_interval": -1,
+      "transport": {
+        "tls_skip_verify": false,
+        "read_timeout": "3600s",
+        "write_timeout": "3600s"
+      },
+      "request": {
+        "headers": {
+          "set": {
+            "Host": "openproxy.zuoyebang.cc",
+            "User-Agent": "Go-http-client/1.1"
+          },
+          "delete": [
+            "X-Stainless-Timeout",
+            "Anthropic-Beta",
+            "X-Stainless-Os",
+            "X-Stainless-Retry-Count",
+            "Anthropic-Dangerous-Direct-Browser-Access",
+            "Anthropic-Version",
+            "X-App",
+            "X-Claude-Code-Session-Id",
+            "X-Stainless-Runtime",
+            "X-Stainless-Runtime-Version",
+            "X-Stainless-Arch",
+            "X-Stainless-Lang",
+            "X-Stainless-Package-Version"
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "set": {},
+          "delete": []
+        }
+      }
+    }
+  ],
+  "log": {
+    "level": "info"
+  }
+}
