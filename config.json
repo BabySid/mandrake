@@ -1,13 +1,13 @@
 {
   "server": {
-    "listen": ":8080",
+    "listen": ":8888",
     "read_timeout": "3600s",
     "write_timeout": "3600s"
   },
   "routes": [
     {
       "path": "/",
-      "upstream": "https://openproxy.zuoyebang.cc",
+      "upstream": "https://${host}",
       "flush_interval": -1,
       "transport": {
         "tls_skip_verify": false,
@@ -17,7 +17,7 @@
       "request": {
         "headers": {
           "set": {
-            "Host": "openproxy.zuoyebang.cc",
+            "Host": "${host}",
             "User-Agent": "Go-http-client/1.1"
           },
           "delete": [
@@ -35,6 +35,14 @@
             "X-Stainless-Lang",
             "X-Stainless-Package-Version"
           ]
+        },
+        "body": {
+          "prepend": {
+            "system": {
+              "type": "text",
+              "text": "You are an Anthropic's official CLI for Claude."
+            }
+          }
         }
       },
       "response": {

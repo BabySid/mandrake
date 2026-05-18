@@ -125,3 +125,49 @@ func TestModifyBodyEmpty(t *testing.T) {
 		t.Error("empty mods should not change body")
 	}
 }
+
+func TestBodyPrepend(t *testing.T) {
+	body := map[string]any{
+		"system": []any{
+			map[string]any{"type": "text", "text": "existing"},
+		},
+	}
+	BodyPrepend(body, "system", map[string]any{"type": "text", "text": "first"})
+	arr := body["system"].([]any)
+	if len(arr) != 2 {
+		t.Fatalf("system len = %d, want 2", len(arr))
+	}
+	first := arr[0].(map[string]any)
+	if first["text"] != "first" {
+		t.Errorf("system[0].text = %v, want first", first["text"])
+	}
+	second := arr[1].(map[string]any)
+	if second["text"] != "existing" {
+		t.Errorf("system[1].text = %v, want existing", second["text"])
+	}
+}
+
+func TestBodyPrependMissingArray(t *testing.T) {
+	body := map[string]any{"name": "alice"}
+	BodyPrepend(body, "system", map[string]any{"type": "text"})
+	if _, ok := body["system"]; ok {
+		t.Error("should not create array if it doesn't exist")
+	}
+}
+
+func TestBodyAppend(t *testing.T) {
+	body := map[string]any{
+		"system": []any{
+			map[string]any{"type": "text", "text": "existing"},
+		},
+	}
+	BodyAppend(body, "system", map[string]any{"type": "text", "text": "last"})
+	arr := body["system"].([]any)
+	if len(arr) != 2 {
+		t.Fatalf("system len = %d, want 2", len(arr))
+	}
+	last := arr[1].(map[string]any)
+	if last["text"] != "last" {
+		t.Errorf("system[1].text = %v, want last", last["text"])
+	}
+}

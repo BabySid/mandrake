@@ -70,8 +70,10 @@ type HeaderMods struct {
 }
 
 type BodyMods struct {
-	Set    map[string]any `json:"set"`
-	Delete []string       `json:"delete"`
+	Set     map[string]any            `json:"set"`
+	Delete  []string                  `json:"delete"`
+	Prepend map[string]any            `json:"prepend"`
+	Append  map[string]any            `json:"append"`
 }
 
 type LogConfig struct {

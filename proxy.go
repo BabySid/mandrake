@@ -33,7 +33,7 @@ func NewProxy(route Route) (http.Handler, error) {
 		transport.ResponseHeaderTimeout = timeout
 	}
 
-	hasBodyMods := len(route.Request.Body.Set) > 0 || len(route.Request.Body.Delete) > 0
+	hasBodyMods := len(route.Request.Body.Set) > 0 || len(route.Request.Body.Delete) > 0 || len(route.Request.Body.Prepend) > 0 || len(route.Request.Body.Append) > 0
 	bodyMods := route.Request.Body
 
 	rt := &bodyModifyingTransport{
@@ -57,6 +57,8 @@ func NewProxy(route Route) (http.Handler, error) {
 			for _, key := range route.Request.Headers.Delete {
 				req.Header.Del(key)
 			}
+
+			slog.Debug("request headers after modification", "method", req.Method, "path", req.URL.Path, "headers", req.Header)
 		},
 		Transport: rt,
 		ModifyResponse: func(resp *http.Response) error {
@@ -103,6 +105,9 @@ func (t *bodyModifyingTransport) RoundTrip(req *http.Request) (*http.Response, e
 			if err != nil {
 				return nil, fmt.Errorf("marshal modified body: %w", err)
 			}
+			var pretty bytes.Buffer
+			json.Indent(&pretty, modified, "", "  ")
+			slog.Debug("request body after modification", "body", pretty.String())
 			req.Body = io.NopCloser(bytes.NewReader(modified))
 			req.ContentLength = int64(len(modified))
 		}
